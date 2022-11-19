@@ -1,17 +1,37 @@
 import React, { useState, createContext } from "react";
-import { loginRequest, signupRequest } from "./authentication.service";
+import {
+  loginRequest,
+  signOutRequest,
+  signupRequest,
+} from "./authentication.service";
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export const AuthenticationContext = createContext();
+const auth = getAuth();
 
 export const AuthenticationContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
+  onAuthStateChanged(auth, (usr) => {
+    if (usr) {
+      console.log("State changed");
+      setUser(usr);
+      setIsLoading(false);
+    } else {
+      console.log("State not changed");
+      // setUser(null); // todo: bugfix
+      setIsLoading(false);
+    }
+  });
+
   const onLogin = (email, password) => {
     setIsLoading(true);
     loginRequest(email, password)
       .then((userCredential) => {
+        console.log("logging in");
         setIsLoading(false);
         setUser(userCredential.user);
       })
@@ -22,6 +42,7 @@ export const AuthenticationContextProvider = ({ children }) => {
   };
 
   const onRegister = (email, password, repeatedPassword) => {
+    setIsLoading(true);
     if (password !== repeatedPassword) {
       setError("Error: Passwords do not match");
       return;
@@ -37,6 +58,12 @@ export const AuthenticationContextProvider = ({ children }) => {
       });
   };
 
+  const onLogout = () => {
+    console.log("signing out");
+    setUser(null);
+    signOutRequest();
+  };
+
   return (
     <AuthenticationContext.Provider
       value={{
@@ -46,27 +73,10 @@ export const AuthenticationContextProvider = ({ children }) => {
         error,
         onLogin,
         onRegister,
+        onLogout,
       }}
     >
       {children}
     </AuthenticationContext.Provider>
   );
 };
-
-// const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-//   const auth = getAuth();
-//   useEffect(() => {
-//     setTimeout(() => {
-//       signInWithEmailAndPassword(auth, "joran.vergauwen@gmail.com", "test123")
-//         .then((userCredential) => {
-//           setIsAuthenticated(true);
-//           const user = userCredential.user;
-//           console.log(user);
-//         })
-//         .catch((e) => {
-//           setIsAuthenticated(false);
-//           console.log(e);
-//         });
-//     }, 2000);
-//   }, []);
