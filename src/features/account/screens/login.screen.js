@@ -38,16 +38,13 @@ export const LoginScreen = ({ navigation }) => {
             textContentType="password"
             secureTextEntry
             autoCapitalize="none"
-            secure
             onChangeText={(p) => setPassword(p)}
           />
         </Spacer>
         {error && (
           <Spacer size="large">
             <ErrorContainer>
-              <Text variant="error">
-                Invalid combination of username and password
-              </Text>
+              <Text variant="error">{error}</Text>
             </ErrorContainer>
           </Spacer>
         )}
