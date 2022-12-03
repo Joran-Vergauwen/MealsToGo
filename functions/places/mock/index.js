@@ -1,16 +1,16 @@
-import antwerp from "./antwerp.json";
-import chicago from "./chicago.json";
-import toronto from "./toronto.json";
-import san_francisco from "./san_francisco.json";
+const antwerp = require("./antwerp");
+const chicago = require("./chicago");
+const toronto = require("./toronto");
+const san_francisco = require("./san_francisco");
 
-export const mocks = {
+module.exports.mocks = {
   "51.219448,4.402464": antwerp,
   "43.653225,-79.383186": toronto,
   "41.878113,-87.629799": chicago,
   "37.7749295,-122.4194155": san_francisco,
 };
 
-export const mockImages = [
+const mockImages = [
   "https://www.foodiesfeed.com/wp-content/uploads/2019/06/top-view-for-box-of-2-burgers-home-made-600x899.jpg",
   "https://www.foodiesfeed.com/wp-content/uploads/2019/04/mae-mu-oranges-ice-600x750.jpg",
   "https://www.foodiesfeed.com/wp-content/uploads/2020/08/detail-of-pavlova-strawberry-piece-of-cake-600x800.jpg",
@@ -32,3 +32,9 @@ export const mockImages = [
   "https://static.nieuwsblad.be/Assets/Images_Upload/2019/03/27/c61bc402-4dee-496f-bae4-f252beff5bb4_web_scale_0.1037775_0.1037775__.jpg?maxheight=475&maxwidth=633&scale=both",
   "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/pork-noodle-stir-fry-3cb19c3.jpg?quality=90&resize=440,400",
 ];
+
+module.exports.addMockImage = (restaurant) => {
+  const randomNumber = Math.ceil(Math.random() * (mockImages.length - 1));
+  restaurant.photos = [mockImages[randomNumber]];
+  return restaurant;
+};
